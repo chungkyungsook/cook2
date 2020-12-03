@@ -316,11 +316,11 @@ def selectScreen():
             if event.type == pygame.QUIT:
                 quitgame()
             # 스페이스바 클릭 게임 시작
-            # if event.type == pygame.KEYDOWN:
-            #     if event.key == pygame.K_SPACE or event.key == pygame.K_UP:
-            #         playGame = 1
-            #         print('시작!', playGame)
-            #         return 1
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_SPACE or event.key == pygame.K_UP:
+                    playGame = 1
+                    print('시작!', playGame)
+                    return 1
 
         drawObject(backImg, 0, 0)
         # drawObject(char1, 370, 300)
