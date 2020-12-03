@@ -277,12 +277,62 @@ def runGame():
         player.draw_Characters(gamepad)
 
         pygame.display.update()
-        clock.tick(15)
+        clock.tick(20)
 
     # 초기화 한 PyGame 종료
     pygame.quit()
     quit()
 # -->
+
+
+# 게임 종료
+def quitgame():
+    pygame.quit()
+
+# Button2 클래스
+class Button2:
+    # global gamepad
+    # gamepad = pygame.display.set_mode((pad_width, pad_height))
+    def __init__(self, img_in, x, y, width, height, img_act, x_act, y_act, action=None):
+        mouse = pygame.mouse.get_pos()
+        click = pygame.mouse.get_pressed()
+        if x + width > mouse[0] > x and y + height > mouse[1] > y:
+            drawObject(img_act, x_act, y_act)
+        else:
+            drawObject(img_in, x, y)
+
+# 선택 화면
+def selectScreen():
+    global gamepad
+    gamepad  = pygame.display.set_mode((pad_width, pad_height))
+    clock = pygame.time.Clock()
+    backImg  = pygame.image.load('assets/image/backImg.png')
+    char1    = pygame.image.load('assets/image/am01.png')
+    char2    = pygame.image.load('assets/image/am02.png')
+    select   = True
+
+    while select:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                quitgame()
+            # 스페이스바 클릭 게임 시작
+            # if event.type == pygame.KEYDOWN:
+            #     if event.key == pygame.K_SPACE or event.key == pygame.K_UP:
+            #         playGame = 1
+            #         print('시작!', playGame)
+            #         return 1
+
+        drawObject(backImg, 0, 0)
+        # drawObject(char1, 370, 300)
+        # drawObject(char2, 570, 300)
+
+        #캐릭터 선택 (크기, 선택 칸 크기)
+        dogSelect  = Button2(char1, 370, 300, 140, 150, char2, 370, 280, None)
+        dog2select = Button2(char2, 570, 300,140, 100, char1, 570, 280, None)
+
+        pygame.display.update()
+        # 자연스러움을 위해
+        clock.tick(15)
 
 def move():
     global gamepad
@@ -317,5 +367,5 @@ def move():
 
 # 시작
 if __name__ == '__main__':
-    if move() == 1:
+    if selectScreen() == 1:
         initGame()
