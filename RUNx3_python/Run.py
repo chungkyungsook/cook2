@@ -67,6 +67,12 @@ def initGame(id):
     global gamepad, clock, obstacles, background1, background2
     global test, test2, test3, test4, jump_img, crashed, knives
 
+    # 음악 중지
+    pygame.mixer.music.stop()
+    pygame.mixer.init()
+    pygame.mixer.music.load("assets/bgm/메인게임.mp3")
+    pygame.mixer.music.play(-1)
+
     knives = []
     obstacles = []
 
@@ -155,6 +161,7 @@ def runGame():
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
+                pygame.mixer.music.stop()
                 pygame.quit();
 
             # 화살표 키를 이용해서 플레이어의 움직임 거리를 조정해준다.
@@ -319,6 +326,11 @@ def selectScreen():
     gamepad  = pygame.display.set_mode((pad_width, pad_height))
     clock = pygame.time.Clock()
 
+    # 대기실 브금
+    pygame.mixer.init()
+    pygame.mixer.music.load("assets/bgm/대기화면bgm.mp3")
+    pygame.mixer.music.play(-1)
+
     #백그라운드 그림
     backImg  = pygame.image.load('assets/image/backImg.png')
 
@@ -343,12 +355,12 @@ def selectScreen():
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 quitgame()
-            # 스페이스바 클릭 게임 시작
-            if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_SPACE or event.key == pygame.K_UP:
-                    playGame = 1
-                    print('시작!', playGame)
-                    return 1
+            # # 스페이스바 클릭 게임 시작
+            # if event.type == pygame.KEYDOWN:
+            #     if event.key == pygame.K_SPACE or event.key == pygame.K_UP:
+            #         playGame = 1
+            #         print('시작!', playGame)
+            #         return 1
 
         drawObject(backImg, 0, 0)
 
