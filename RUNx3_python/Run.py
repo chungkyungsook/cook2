@@ -1,6 +1,7 @@
 import pygame, random
 from time import sleep
 import jump
+import time
 
 WHITE            = (255, 255, 255)
 RED              = (255, 0, 0)
@@ -62,7 +63,7 @@ def drawObject(obj, x,y):
 
 
 # 게임을 초기화하고 시작하는 함수
-def initGame():
+def initGame(id):
     global gamepad, clock, obstacles, background1, background2
     global test, test2, test3, test4, jump_img, crashed, knives
 
@@ -76,11 +77,18 @@ def initGame():
     pygame.display.set_caption("PyFlying")
 
     # 그림
-    test = './assets/image/am01.png'
-    test2 = './assets/image/am02.png'
-    test3 = './assets/image/am03.png'
-    test4 = './assets/image/am04.png'
-    jump_img = './assets/image/amJump.png'
+    if id == 1:
+        test = './assets/image/am01.png'
+        test2 = './assets/image/am02.png'
+        test3 = './assets/image/am03.png'
+        test4 = './assets/image/am04.png'
+        jump_img = './assets/image/amJump.png'
+    else:
+        test = './assets/image/am2_01.png'
+        test2 = './assets/image/am2_02.png'
+        test3 = './assets/image/am02_03.png'
+        test4 = './assets/image/am2_04.png'
+        jump_img = './assets/image/amJump2.png'
 
     background1 = pygame.image.load('./assets/image/background.png')
     background2 = pygame.image.load('./assets/image/background.png')
@@ -105,7 +113,7 @@ def runGame():
     global gamepad, clock, obstacles, background1, background2
     global test, test2, test3, test4, jump_img, crashed, knives
 
-    # 플레이어 자동차 생성
+    # 플레이어 캐릭터 생성
     player = jump.Characters(VELOCITY, MASS)
 
     player.load_image(test, pad_width, pad_height)  # 플레이어 캐릭터
@@ -289,26 +297,46 @@ def runGame():
 def quitgame():
     pygame.quit()
 
-# Button2 클래스
+# Button2 클래스 캐릭터 선택을 위해 필요함
 class Button2:
     # global gamepad
     # gamepad = pygame.display.set_mode((pad_width, pad_height))
-    def __init__(self, img_in, x, y, width, height, img_act, x_act, y_act, action=None):
+    def __init__(self, img_in, x, y, width, height, img_act, x_act, y_act,id, action=None):
         mouse = pygame.mouse.get_pos()
         click = pygame.mouse.get_pressed()
         if x + width > mouse[0] > x and y + height > mouse[1] > y:
             drawObject(img_act, x_act, y_act)
+            if click[0] and action != None:
+                time.sleep(1)
+                action(id)
         else:
             drawObject(img_in, x, y)
 
-# 선택 화면
+
+# 캐릭터 선택 화면
 def selectScreen():
     global gamepad
     gamepad  = pygame.display.set_mode((pad_width, pad_height))
     clock = pygame.time.Clock()
+
+    #백그라운드 그림
     backImg  = pygame.image.load('assets/image/backImg.png')
+
+    #게임 종료 버튼
+    quitImg      = pygame.image.load("assets/image/quiticon.png")
+    clickQuitImg = pygame.image.load("assets/image/clickedQuitIcon.png")
+
+    #타이틀
+    title    = pygame.image.load("assets/image/타이틀.png")
+    #캐릭터 선택 제목
+    choose = pygame.image.load("assets/image/캐릭터.png")
+
+    # 빨간 캐릭터
     char1    = pygame.image.load('assets/image/am01.png')
-    char2    = pygame.image.load('assets/image/am02.png')
+    char2    = pygame.image.load('assets/image/am03.png')
+    #갈색 캐릭터
+    char3 = pygame.image.load('assets/image/am2_01.png')
+    char4 = pygame.image.load('assets/image/am02_03.png')
     select   = True
 
     while select:
@@ -323,49 +351,54 @@ def selectScreen():
                     return 1
 
         drawObject(backImg, 0, 0)
-        # drawObject(char1, 370, 300)
-        # drawObject(char2, 570, 300)
 
-        #캐릭터 선택 (크기, 선택 칸 크기)
-        dogSelect  = Button2(char1, 370, 300, 140, 150, char2, 370, 280, None)
-        dog2select = Button2(char2, 570, 300,140, 100, char1, 570, 280, None)
+        #캐릭터 선택 (크기, 선택 칸 크기) 빨강, 갈색
+        Button2(char2, 370, 280, 140, 150, char1, 370, 260,1, initGame)
+        Button2(char4, 570, 300, 140, 100, char3, 570, 280 ,2, initGame)
+
+        #종료 버튼
+        Button2(quitImg, 900, 460, 60, 20, clickQuitImg, 900, 450,0, quitgame)
+
+        #게임 타이틀
+        Button2(title,  15, 40 , 140, 100, title,  15, 40, 0,  initGame)
+        #캐릭터 선택 글자
+        Button2(choose, 15, 100, 140, 100, choose, 15, 100, 0, initGame)
 
         pygame.display.update()
         # 자연스러움을 위해
         clock.tick(15)
 
-def move():
-    global gamepad
-    # pygame 라이브러리 초기화
-    # 처음에 항상 pygame.init() 호출 필수
-    pygame.init()
-    gamepad = pygame.display.set_mode((pad_width, pad_height))
-    pygame.display.set_caption("PyFlying")
-
-    background = pygame.image.load('./assets/image/backImg.png')
-    background4 = pygame.image.load('./assets/image/am01.png')
-    background5 = pygame.image.load('./assets/image/am02.png')
-    playGame = False;
-
-    # 변수
-    while True:  # 게임 루프
-        # 변수 업데이트
-        while not playGame:
-            for event in pygame.event.get():
-                if event.type == pygame.QUIT:
-                    pygame.quit(); #게임 종료
-                if event.type == pygame.KEYDOWN:
-                    if event.key == pygame.K_SPACE or event.key == pygame.K_UP:
-                        playGame = 1
-                        print('시작!',playGame)
-                        return 1
-            # 화면 그리기
-            drawObject(background, 0, 0)
-            drawObject(background4, 370, 300)
-            drawObject(background5, 570, 300)
-            pygame.display.update()  # 모든 화면 그리기 업데이트
+# def move():
+#     global gamepad
+#     # pygame 라이브러리 초기화
+#     # 처음에 항상 pygame.init() 호출 필수
+#     pygame.init()
+#     gamepad = pygame.display.set_mode((pad_width, pad_height))
+#     pygame.display.set_caption("PyFlying")
+#
+#     background = pygame.image.load('./assets/image/backImg.png')
+#     background4 = pygame.image.load('./assets/image/am01.png')
+#     background5 = pygame.image.load('./assets/image/am02.png')
+#     playGame = False;
+#
+#     # 변수
+#     while True:  # 게임 루프
+#         # 변수 업데이트
+#         while not playGame:
+#             for event in pygame.event.get():
+#                 if event.type == pygame.QUIT:
+#                     pygame.quit(); #게임 종료
+#                 if event.type == pygame.KEYDOWN:
+#                     if event.key == pygame.K_SPACE or event.key == pygame.K_UP:
+#                         playGame = 1
+#                         print('시작!',playGame)
+#                         return 1
+#             # 화면 그리기
+#             drawObject(background, 0, 0)
+#             drawObject(background4, 370, 300)
+#             drawObject(background5, 570, 300)
+#             pygame.display.update()  # 모든 화면 그리기 업데이트
 
 # 시작
 if __name__ == '__main__':
-    if selectScreen() == 1:
-        initGame()
+    selectScreen()
